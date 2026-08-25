@@ -52,4 +52,4 @@ jobs:
         with:
           local: fit-moaeiou.tar.zst
           remote: /var/www/html/
-          key: ${{ secrets.CC_LA_KEY }}
+          key: ${{ secrets.SSH_KEY }}
