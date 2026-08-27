@@ -35,6 +35,7 @@ jobs:
           node format.js header.html ./header.html
           node format.js footer.html ./footer.html
           tar -cvf 0fi.tar.zst --zstd header.html footer.html style.css fancyindex.js
+          ln -s ./0fi.tar.zst ./fi.tar.zst
 
       - name: Release
         uses: softprops/action-gh-release@master
@@ -50,6 +51,6 @@ jobs:
       - name: Send to mirror
         uses: moaeiou/moaeiou/actions/rsync@main
         with:
-          local: 0fi.tar.zst
+          local: fi.tar.zst
           remote: /var/www/html/
           key: ${{ secrets.SSH_KEY }}
