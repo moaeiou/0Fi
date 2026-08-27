@@ -72,7 +72,7 @@ location ^~ / {
     fancyindex_exact_size off;
     fancyindex_header "/0fi/header.html";
     fancyindex_footer "/0fi/footer.html";
-    fancyindex_ignore "0fi";
+    fancyindex_ignore "0fi/";
 }
 ```
 
