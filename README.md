@@ -1,6 +1,6 @@
-# FancyIndex-Theme
+# 0Fi
 
-A modern, freedom, fastly, easy-to-use, FancyIndex-Theme.
+A modern, freedom, fastly, easy-to-use,**0 Depends FancyIndex-Theme**.
 
 ## 🚀 Features
 
@@ -10,7 +10,7 @@ Forked from <https://github.com/Naereen/Nginx-Fancyindex-Theme>
 - Support **Light and Dark** theme and aslo have autochange. No flash when open.
 - Search, and the word stay in URL so you can share it.
 - Copy page URL in one click. File link just right click the name.
-- Just only **3 steps** to depoly in any can install nginx devices.
+- Just only **3 steps** to depoly in any can install nginx fancyindex devices.
 - Release is minify! End file size still so small.
 
 ## 🔧 How to use
@@ -30,12 +30,12 @@ Forked from <https://github.com/Naereen/Nginx-Fancyindex-Theme>
 ```bash
 apt update
 apt install wget nginx libnginx-mod-http-fancyindex
-rm -rf fancyindex-theme/
-mkdir -p fancyindex-theme/
-cd fancyindex-theme/
-wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fit-moaeiou.tar.zst
-tar -xvf fit-moaeiou.tar.zst
-rm fit-moaeiou.tar.zst
+rm -rf 0fi/
+mkdir -p 0fi/
+cd 0fi/
+wget https://github.com/moaeiou/0fi/releases/latest/download/0fi.tar.zst
+tar -xvf 0fi.tar.zst
+rm 0fi.tar.zst
 cd ..
 ```
 
@@ -45,9 +45,9 @@ cd ..
 rm -rf fancyindex-theme/
 mkdir -p fancyindex-theme/
 cd fancyindex-theme/
-wget https://github.com/moaeiou/fancyindex-theme/releases/latest/download/fit-moaeiou.tar.zst
-tar -xvf fit-moaeiou.tar.zst
-rm fit-moaeiou.tar.zst
+wget https://github.com/moaeiou/0fi/releases/latest/download/0fi.tar.zst
+tar -xvf 0fi.tar.zst
+rm 0fi.tar.zst
 cd ..
 ```
 
@@ -70,9 +70,9 @@ location ^~ / {
     fancyindex_localtime on;
     fancyindex_show_path off;
     fancyindex_exact_size off;
-    fancyindex_header "/fancyindex-theme/header.html";
-    fancyindex_footer "/fancyindex-theme/footer.html";
-    fancyindex_ignore "fancyindex-theme";
+    fancyindex_header "/0fi/header.html";
+    fancyindex_footer "/0fi/footer.html";
+    fancyindex_ignore "0fi";
 }
 ```
 

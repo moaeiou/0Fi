@@ -34,13 +34,13 @@ jobs:
           curl -LO https://raw.githubusercontent.com/moaeiou/moaeiou/refs/heads/main/.github/workflows/format.js
           node format.js header.html ./header.html
           node format.js footer.html ./footer.html
-          tar -cvf fit-moaeiou.tar.zst --zstd header.html footer.html style.css fancyindex.js
+          tar -cvf 0fi.tar.zst --zstd header.html footer.html style.css fancyindex.js
 
       - name: Release
         uses: softprops/action-gh-release@master
         with:
           tag_name: ${{ steps.version.outputs.version }}
-          files: fit-moaeiou.tar.zst
+          files: 0fi.tar.zst
           body: |
             # 📝 Release Note
             - Fixes and improvements
@@ -50,6 +50,6 @@ jobs:
       - name: Send to mirror
         uses: moaeiou/moaeiou/actions/rsync@main
         with:
-          local: fit-moaeiou.tar.zst
+          local: 0fi.tar.zst
           remote: /var/www/html/
           key: ${{ secrets.SSH_KEY }}
