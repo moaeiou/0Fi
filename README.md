@@ -42,9 +42,9 @@ cd ..
 ### ⬆️ Update
 
 ```bash
-rm -rf fancyindex-theme/
-mkdir -p fancyindex-theme/
-cd fancyindex-theme/
+rm -rf 0fi/
+mkdir -p 0fi/
+cd 0fi/
 wget https://github.com/moaeiou/0fi/releases/latest/download/0fi.tar.zst
 tar -xvf 0fi.tar.zst
 rm 0fi.tar.zst

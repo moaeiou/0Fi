@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const THEME_STORAGE_KEY = "fancyindex-theme";
+  const THEME_STORAGE_KEY = "0fi";
   const ITEMS_PER_PAGE = 100;
 
   {
@@ -46,11 +46,11 @@
       const script = document.querySelector('script[src*="fancyindex.js"]');
       const src = script?.getAttribute("src") || "";
       const match = src.match(/^(.*)\/fancyindex\.js(?:\?.*)?$/);
-      return match ? match[1] : "/fancyindex-theme";
+      return match ? match[1] : "/0fi";
     }
 
     function detectSiteRoot(themeBase) {
-      const withoutTheme = themeBase.replace(/\/fancyindex-theme$/i, "");
+      const withoutTheme = themeBase.replace(/\/0fi$/i, "");
       if (!withoutTheme) return "/";
       return withoutTheme.endsWith("/") ? withoutTheme : `${withoutTheme}/`;
     }
