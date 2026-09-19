@@ -20,6 +20,7 @@ jobs:
       - name: Just build, Don't worry
         uses: moaeiou/moaeiou/actions/buildnode@main
         with:
+          pnpm: no
           command: |
             npx --yes esbuild --minify --allow-overwrite --legal-comments=none fancyindex.js --outfile=./fancyindex.js
             npx --yes esbuild --minify --allow-overwrite --legal-comments=none style.css --outfile=./style.css
