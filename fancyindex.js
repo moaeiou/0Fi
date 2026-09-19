@@ -21,7 +21,6 @@
     const root = document.documentElement;
     root.classList.remove("theme-light", "theme-dark");
     root.classList.add(`theme-${actual}`);
-    root.style.colorScheme = actual;
   }
 
   function start() {
@@ -43,16 +42,30 @@
     function detectThemeBase() {
       const fromHtml = document.documentElement.getAttribute("data-theme-base");
       if (fromHtml) return fromHtml.replace(/\/+$/, "") || "/";
+
       const script = document.querySelector('script[src*="fancyindex.js"]');
-      const src = script?.getAttribute("src") || "";
-      const match = src.match(/^(.*)\/fancyindex\.js(?:\?.*)?$/);
-      return match ? match[1] : "/0fi";
+      const src = script?.getAttribute("src");
+      if (!src) return "/0fi";
+
+      // Resolve the src the way the browser did, so relative paths such as
+      // "fancyindex.js" or "/assets/fancyindex.js" work too.
+      try {
+        const path = new URL(src, window.location.href).pathname;
+        const match = path.match(/^(.*)\/fancyindex\.js$/);
+        return match ? match[1] || "/" : "/0fi";
+      } catch {
+        return "/0fi";
+      }
     }
 
+    // The theme lives in its own directory (e.g. /0fi), so the site root is
+    // whatever sits above it. Deriving it instead of matching the literal
+    // "/0fi" keeps the theme working under a different name or a sub-path.
     function detectSiteRoot(themeBase) {
-      const withoutTheme = themeBase.replace(/\/0fi$/i, "");
-      if (!withoutTheme) return "/";
-      return withoutTheme.endsWith("/") ? withoutTheme : `${withoutTheme}/`;
+      const trimmed = themeBase.replace(/\/+$/, "");
+      const separator = trimmed.lastIndexOf("/");
+      if (separator <= 0) return "/";
+      return `${trimmed.slice(0, separator)}/`;
     }
 
     const themeBase = detectThemeBase();
@@ -97,24 +110,30 @@
       }
     }
 
+    const flashTimers = new WeakMap();
+
     function flashButton(button, text) {
-      const originalText = button.textContent;
+      const previous = flashTimers.get(button);
+      const originalText = previous?.originalText ?? button.textContent;
+      if (previous) clearTimeout(previous.timer);
+
       button.textContent = text;
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         button.textContent = originalText;
+        flashTimers.delete(button);
       }, 2000);
+      flashTimers.set(button, { originalText, timer });
     }
 
     function sanitizeNameCells() {
       if (!tbody) return;
 
-      // The fancyindex module (especially 0.5.x, which Debian ships) inserts
-      // file names into the listing without HTML-escaping them, so a file named
-      // e.g. `<img src=x onerror=alert(1)>` can smuggle markup into the page.
-      // Rebuild every name cell as plain text. The href is percent-encoded by
-      // the module, so it is the reliable source for the real file name. This
-      // is defense-in-depth; the CSP meta tag in header.html is what actually
-      // stops injected scripts from running.
+      // Rebuild every name cell as plain text instead of trusting the markup
+      // the module emitted. The href is percent-encoded by the module, so it is
+      // the reliable source for the real file name, and a file called
+      // `<img src=x onerror=alert(1)>` stays a file name rather than markup.
+      // This is defense-in-depth; the CSP meta tag in header.html is the
+      // backstop if a build ever emits unescaped names.
       Array.from(tbody.querySelectorAll("tr")).forEach((row) => {
         const cell = row.querySelector("td");
         if (!cell) return;
@@ -122,8 +141,13 @@
         const originalLink = cell.querySelector("a");
         const href = originalLink?.getAttribute("href") || "";
 
-        // The "Parent directory" row is static, module-generated content.
-        if (href.startsWith("../")) return;
+        // The parent entry is static, module-generated content. The module
+        // emits it as a plain <tr> even though the stylesheet styles
+        // "tr.parent", so tag the row and leave its markup alone.
+        if (href.startsWith("../") || /^Parent directory/i.test(cell.textContent || "")) {
+          row.classList.add("parent");
+          return;
+        }
 
         const decodedHref = (() => {
           if (!href) return null;
@@ -158,15 +182,19 @@
         }
         link.textContent = name;
         link.title = name;
+        link.classList.add(isDirectory ? "dir" : "file");
         cell.appendChild(link);
       });
     }
 
     function applyColumnLabels() {
       if (!table || !tbody) return;
-      const headers = Array.from(table.querySelectorAll("thead th")).map((th) =>
-        th.textContent.replace(/\s+/g, " ").trim(),
-      );
+      const headers = Array.from(table.querySelectorAll("thead th")).map((th) => {
+        // Each header holds a sort link plus a second link with the direction
+        // arrow, so read the label from the first link only.
+        const label = th.querySelector("a")?.textContent ?? th.textContent;
+        return label.replace(/\s+/g, " ").trim();
+      });
       tbody.querySelectorAll("tr").forEach((row) => {
         Array.from(row.children).forEach((cell, index) => {
           if (headers[index]) cell.setAttribute("data-label", headers[index]);
@@ -250,10 +278,13 @@
     }
 
     function updatePageTitle() {
-      const rawPath = window.location.pathname;
-      const displayPath =
-        rawPath.length > 1 ? rawPath.replace(/\/+$/, "") : rawPath || "/";
-      document.title = `${displayPath} | ${SITE_NAME}`;
+      const { decodedParts } = pathParts();
+      const rootPath = siteRoot === "/" ? "" : siteRoot.replace(/\/+$/, "");
+      const displayPath = decodedParts.length
+        ? `${rootPath}/${decodedParts.join("/")}`
+        : rootPath || "/";
+      const label = displayPath === "/" ? "Root" : displayPath;
+      document.title = `${label} | ${SITE_NAME}`;
     }
 
     updatePageTitle();
@@ -307,6 +338,7 @@
       buttonsDiv.className = "pagination-buttons";
 
       const prevBtn = document.createElement("button");
+      prevBtn.type = "button";
       prevBtn.textContent = "← Previous";
       prevBtn.className = "pagination-btn";
       prevBtn.disabled = currentPage === 1;
@@ -338,6 +370,7 @@
       }
 
       const nextBtn = document.createElement("button");
+      nextBtn.type = "button";
       nextBtn.textContent = "Next →";
       nextBtn.className = "pagination-btn";
       nextBtn.disabled = currentPage === totalPages;
@@ -362,6 +395,7 @@
 
     function createPageButton(pageNum) {
       const btn = document.createElement("button");
+      btn.type = "button";
       btn.textContent = pageNum;
       btn.className = "pagination-btn";
       if (pageNum === currentPage) {
@@ -375,11 +409,22 @@
       return btn;
     }
 
-    function persistSearch(query) {
+    // Keep the search term and the current page in the URL so a reload (or a
+    // shared link) lands on the same view. The sort links inside the table get
+    // the query too, because the module reloads the directory when sorting.
+    function persistUrl() {
+      const query = input?.value.trim() || "";
       const url = new URL(window.location.href);
       if (query) url.searchParams.set("q", query);
       else url.searchParams.delete("q");
-      history.replaceState(null, "", url);
+      if (currentPage > 1) url.searchParams.set("page", String(currentPage));
+      else url.searchParams.delete("page");
+
+      try {
+        history.replaceState(null, "", url.toString());
+      } catch {
+        /* no History API (e.g. a file:// listing); sorting still works below */
+      }
 
       table?.querySelectorAll("thead a[href]").forEach((link) => {
         try {
@@ -388,6 +433,7 @@
           const next = new URL(href, window.location.href);
           if (query) next.searchParams.set("q", query);
           else next.searchParams.delete("q");
+          next.searchParams.delete("page");
           link.setAttribute("href", `${next.pathname}${next.search}`);
         } catch {
           /* ignore unparseable sort links */
@@ -395,65 +441,66 @@
       });
     }
 
-    function applySearch(rawQuery) {
+    function applySearch(rawQuery, { resetPage = true } = {}) {
       const searchValue = rawQuery.trim();
 
       if (!searchValue) {
         filteredItems = [...contentItems];
-        contentItems.forEach((item) => (item.hidden = false));
-        currentPage = 1;
-        persistSearch("");
-        renderPage();
-        return;
+      } else {
+        const terms = searchValue.toLowerCase().split(/\s+/);
+        filteredItems = contentItems.filter((item) => {
+          const text =
+            item.querySelector("td a")?.textContent.replace(/\s+/g, " ") || "";
+          const normalizedText = text.toLowerCase();
+          return terms.every((term) => normalizedText.includes(term));
+        });
       }
 
-      const terms = searchValue.toLowerCase().split(/\s+/);
-
-      filteredItems = contentItems.filter((item) => {
-        const text =
-          item.querySelector("td a")?.textContent.replace(/\s+/g, " ") || "";
-        const normalizedText = text.toLowerCase();
-        const matches = terms.every((term) => normalizedText.includes(term));
-        item.hidden = !matches;
-        return matches;
-      });
-
-      currentPage = 1;
-      persistSearch(searchValue);
+      if (resetPage) currentPage = 1;
       renderPage();
     }
 
     function renderPage({ shouldScroll = false } = {}) {
       if (!tbody) return;
 
-      listItems.forEach((item) => (item.style.display = "none"));
+      const totalPages = Math.max(
+        1,
+        Math.ceil(filteredItems.length / ITEMS_PER_PAGE),
+      );
+      currentPage = Math.min(Math.max(currentPage, 1), totalPages);
+
+      listItems.forEach((item) => (item.hidden = true));
       parentItems.forEach((item) => {
         item.hidden = false;
-        item.style.display = "";
       });
 
       const start = (currentPage - 1) * ITEMS_PER_PAGE;
-      const pageItems = filteredItems.slice(start, start + ITEMS_PER_PAGE);
-      pageItems.forEach((item) => {
-        if (!item.hidden) item.style.display = "";
+      filteredItems.slice(start, start + ITEMS_PER_PAGE).forEach((item) => {
+        item.hidden = false;
       });
 
       const existingPagination = table?.parentNode.querySelector(".pagination");
       if (existingPagination) existingPagination.remove();
 
-      if (filteredItems.length > ITEMS_PER_PAGE) {
+      if (filteredItems.length > ITEMS_PER_PAGE && table) {
         const pagination = createPagination();
-        if (pagination && table) table.after(pagination);
+        if (pagination) table.after(pagination);
       }
 
       if (resultsStatus) {
         const query = input?.value.trim();
-        resultsStatus.textContent = query
-          ? filteredItems.length
+        if (query) {
+          resultsStatus.textContent = filteredItems.length
             ? `${filteredItems.length} matching item${filteredItems.length === 1 ? "" : "s"}`
-            : "No matching items"
-          : "";
+            : "No matching items";
+        } else {
+          resultsStatus.textContent = contentItems.length
+            ? ""
+            : "This directory is empty.";
+        }
       }
+
+      persistUrl();
 
       if (shouldScroll) {
         window.scrollTo({
@@ -507,7 +554,6 @@
 
       document.documentElement.classList.remove("theme-light", "theme-dark");
       document.documentElement.classList.add(`theme-${actualTheme}`);
-      document.documentElement.style.colorScheme = actualTheme;
       body.classList.remove("theme-light", "theme-dark");
     }
 
@@ -537,10 +583,13 @@
       input.select();
     });
 
-    const initialQuery =
-      new URLSearchParams(window.location.search).get("q") || "";
+    const initialParams = new URLSearchParams(window.location.search);
+    const initialQuery = initialParams.get("q") || "";
+    const initialPage = Number.parseInt(initialParams.get("page") || "1", 10);
+    if (Number.isFinite(initialPage) && initialPage > 0) currentPage = initialPage;
+
     if (input && initialQuery) input.value = initialQuery;
-    if (initialQuery) applySearch(initialQuery);
+    if (initialQuery) applySearch(initialQuery, { resetPage: false });
     else renderPage();
   }
 

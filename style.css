@@ -59,7 +59,7 @@ html.theme-dark {
   --focus-border: #cfd6df;
   --table-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
   --td-border: rgba(255, 255, 255, 0.07);
-  --parent-hover: #2a2a2a;
+  --parent-hover: #f2f5fa;
   --toggle-bg: #1f222b;
   --toggle-fg: #ffffff;
   --toggle-border: rgba(255, 255, 255, 0.12);
@@ -224,6 +224,12 @@ table {
   box-shadow: var(--table-shadow);
 }
 
+/* Rows are filtered by the hidden attribute, so it must beat the display
+   rules below (the mobile layout turns every tr into a block). */
+#list tbody tr[hidden] {
+  display: none;
+}
+
 tr {
   outline: 0;
   border: 0;
@@ -294,6 +300,12 @@ td a {
 }
 
 #list tbody tr td:first-child a[href$="/" i]::before {
+  content: "📁";
+}
+
+/* Some module builds keep the sort query on directory links, which breaks the
+   href-based selector above. fancyindex.js tags the link instead. */
+#list tbody tr td:first-child a.dir::before {
   content: "📁";
 }
 
@@ -482,7 +494,10 @@ footer a {
     400 0.85rem system-ui,
     sans-serif;
   cursor: pointer;
-  transition: all 150ms ease-in;
+  transition:
+    background-color 150ms ease-in,
+    border-color 150ms ease-in,
+    color 150ms ease-in;
 }
 
 .copy-page-url-btn:hover {
@@ -528,7 +543,10 @@ footer a {
     400 0.9rem system-ui,
     sans-serif;
   cursor: pointer;
-  transition: all 150ms ease-in;
+  transition:
+    background-color 150ms ease-in,
+    border-color 150ms ease-in,
+    color 150ms ease-in;
   min-width: 2.5rem;
 }
 
@@ -559,10 +577,9 @@ footer a {
   padding: 0 0.25rem;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 719.98px) {
   body {
     padding: clamp(16px, 4vw, 32px);
-    box-shadow: none;
   }
 
   table,

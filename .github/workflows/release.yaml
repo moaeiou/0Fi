@@ -11,45 +11,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Like it never left.
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@main
-
-      - name: Guess a version
+      - name: Fuck a version
         id: version
         shell: bash
         run: echo "version=$(date +%s)" >> "$GITHUB_OUTPUT"
 
-      - name: Setup Node.js
-        uses: actions/setup-node@main
+      - name: Just build, Don't worry
+        uses: moaeiou/moaeiou/actions/buildnode@main
         with:
-          node-version: "latest"
-
-      - name: Build!
-        shell: bash
-        run: |
-          npx --yes esbuild --minify --allow-overwrite --legal-comments=none fancyindex.js --outfile=./fancyindex.js
-          npx --yes esbuild --minify --allow-overwrite --legal-comments=none style.css --outfile=./style.css
-          curl -LO https://raw.githubusercontent.com/moaeiou/moaeiou/refs/heads/main/.github/workflows/format.js
-          node format.js header.html ./header.html
-          node format.js footer.html ./footer.html
-          tar -cvf fi.tar.zst --zstd header.html footer.html style.css fancyindex.js
-          ln -s ./fi.tar.zst ./0fi.tar.zst
-
-      - name: Release
-        uses: softprops/action-gh-release@master
-        with:
-          tag_name: ${{ steps.version.outputs.version }}
-          files: 0fi.tar.zst
-          body: |
-            # 📝 Release Note
-            - Fixes and improvements
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Send to mirror
-        uses: moaeiou/moaeiou/actions/rsync@main
-        with:
-          local: fi.tar.zst
-          key: ${{ secrets.SSH_KEY }}
+          command: |
+            npx --yes esbuild --minify --allow-overwrite --legal-comments=none fancyindex.js --outfile=./fancyindex.js
+            npx --yes esbuild --minify --allow-overwrite --legal-comments=none style.css --outfile=./style.css
+            curl -LO https://raw.githubusercontent.com/moaeiou/moaeiou/refs/heads/main/.github/workflows/format.js
+            node format.js header.html ./header.html
+            node format.js footer.html ./footer.html
+            tar -cvf fi.tar.zst --zstd header.html footer.html style.css fancyindex.js
+            ln -s ./fi.tar.zst ./0fi.tar.zst
+          release: yes
+          release-tag_name: ${{ steps.version.outputs.version }}
+          release-file: 0fi.tar.zst
+          rsync: "yes"
+          rsync-local: fi.tar.zst
+          rsync-key: ${{ secrets.SSH_KEY }}

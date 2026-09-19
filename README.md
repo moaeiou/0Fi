@@ -1,36 +1,31 @@
-# 0Fi
+# 0FI
 
-A modern, freedom, fastly, easy-to-use,**0 Depends FancyIndex-Theme**.
+现在是: **中文简体** | We aslo have : [English](README.en.md) 
 
-## 🚀 Features
+没有依赖的FancyIndex-Theme
 
-Forked from <https://github.com/Naereen/Nginx-Fancyindex-Theme>
+## 🚀 特性
 
-- A beautiful UI to get file fast any easy.
-- Support **Light and Dark** theme and aslo have autochange. No flash when open.
-- Search, and the word stay in URL so you can share it.
-- Copy page URL in one click. File link just right click the name.
-- Just only **3 steps** to depoly in any can install nginx fancyindex devices.
-- Release is minify! End file size still so small.
+这是[Naereen/Nginx-Fancyindex-Theme](https://github.com/Naereen/Nginx-Fancyindex-Theme)的分支
 
-## 🔧 How to use
+- 具备一个漂亮的UI同时兼顾快速和易用.
+- 支持**黑白主题切换**,同时具备自动切换.没有打开时闪烁.
+- 支持页中搜索文件并保持URL,您还可以复制当前的URL.
+- 只需**3步**即可在任何支持fancyindex和nginx的设备上运行此项目.
+- 文件体积十分微小.
 
-> If you not using Debian GNU/Linux and software source not have fancyindex module, Please try to self build nginx and addital fancyindex module.
->
-> Make sure you are riding at `/var/www/html`
+## 🔧 如何使用
 
-### ⬇️ Install for Debian:
+如果你没有使用Debian GNU/Linux 或者您的软件源中不包含fancyindex模块,请尝试自行编译并加入fancyindex模块.
 
-> For based on Fedora, change pm to dnf/rpm and install `nginx-mod-fancyindex`.
->
-> You must be already at /var/www/html or nginx root dictionary.
->
-> And from line 3 next.
+### ⬇️ 首次安装
+
+确保您在nginx配置文件中设置的`root`目录并且使用Debian GNU/Linux 12或更高版本.
 
 ```bash
 apt update
-apt install wget nginx libnginx-mod-http-fancyindex
-rm -rf 0fi/
+apt install -y wget nginx libnginx-mod-http-fancyindex
+rm -rf 0fi/ || exit 0
 mkdir -p 0fi/
 cd 0fi/
 wget https://github.com/moaeiou/0fi/releases/latest/download/0fi.tar.zst
@@ -39,7 +34,7 @@ rm 0fi.tar.zst
 cd ..
 ```
 
-### ⬆️ Update
+### ⬆️ 更新
 
 ```bash
 rm -rf 0fi/
@@ -51,15 +46,15 @@ rm 0fi.tar.zst
 cd ..
 ```
 
-### 📶 Nginx
+### 📶 对于Nginx配置
 
-> Include the `fancyindex` module first, add it in the header of nginx config
+先在Nginx的头部引入FancyIndex-Theme
 
 ```ini
 include /etc/nginx/modules-enabled/*.conf;
 ```
 
-> `location` part.
+`location` 部分
 
 ```ini
 location ^~ / {
@@ -76,15 +71,17 @@ location ^~ / {
 }
 ```
 
-> Validate and reload the configuration:
+确认配置无误后,保存并重启Nginx
 
 ```bash
 nginx -t
-systemctl reload nginx
+systemctl restart nginx
 ```
 
-## ⚖️ LICENSE
+## ⚖️ 条款与授权
 
-This project licensed under the [MoPL](https://867678.xyz/docs/mopl).
+这个项目以[MoPL](https://867678.xyz/docs/mopl)协议授权.
 
-The source licensed under the MIT and Copyright © 2016-17 Lilian Besson [Naereen](https://github.com/Naereen)
+原项目作者: © 2016-17 Lilian Besson [Naereen](https://github.com/Naereen)
+
+原项目版权信息: [这里](https://github.com/Naereen/Nginx-Fancyindex-Theme/blob/master/LICENSE)
