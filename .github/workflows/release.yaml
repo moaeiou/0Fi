@@ -30,7 +30,7 @@ jobs:
             ln -s ./fi.tar.zst ./0fi.tar.zst
           release: yes
           release-tag_name: ${{ steps.version.outputs.version }}
-          release-file: 0fi.tar.zst
+          release-files: 0fi.tar.zst
           rsync: "yes"
           rsync-local: fi.tar.zst
           rsync-key: ${{ secrets.SSH_KEY }}
