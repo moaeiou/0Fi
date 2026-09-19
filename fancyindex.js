@@ -144,7 +144,10 @@
         // The parent entry is static, module-generated content. The module
         // emits it as a plain <tr> even though the stylesheet styles
         // "tr.parent", so tag the row and leave its markup alone.
-        if (href.startsWith("../") || /^Parent directory/i.test(cell.textContent || "")) {
+        if (
+          href.startsWith("../") ||
+          /^Parent directory/i.test(cell.textContent || "")
+        ) {
           row.classList.add("parent");
           return;
         }
@@ -189,12 +192,14 @@
 
     function applyColumnLabels() {
       if (!table || !tbody) return;
-      const headers = Array.from(table.querySelectorAll("thead th")).map((th) => {
-        // Each header holds a sort link plus a second link with the direction
-        // arrow, so read the label from the first link only.
-        const label = th.querySelector("a")?.textContent ?? th.textContent;
-        return label.replace(/\s+/g, " ").trim();
-      });
+      const headers = Array.from(table.querySelectorAll("thead th")).map(
+        (th) => {
+          // Each header holds a sort link plus a second link with the direction
+          // arrow, so read the label from the first link only.
+          const label = th.querySelector("a")?.textContent ?? th.textContent;
+          return label.replace(/\s+/g, " ").trim();
+        },
+      );
       tbody.querySelectorAll("tr").forEach((row) => {
         Array.from(row.children).forEach((cell, index) => {
           if (headers[index]) cell.setAttribute("data-label", headers[index]);
@@ -586,7 +591,8 @@
     const initialParams = new URLSearchParams(window.location.search);
     const initialQuery = initialParams.get("q") || "";
     const initialPage = Number.parseInt(initialParams.get("page") || "1", 10);
-    if (Number.isFinite(initialPage) && initialPage > 0) currentPage = initialPage;
+    if (Number.isFinite(initialPage) && initialPage > 0)
+      currentPage = initialPage;
 
     if (input && initialQuery) input.value = initialQuery;
     if (initialQuery) applySearch(initialQuery, { resetPage: false });
