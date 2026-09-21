@@ -6,7 +6,7 @@
 
 ## 🚀 特性
 
-这是[Naereen/Nginx-Fancyindex-Theme](https://github.com/Naereen/Nginx-Fancyindex-Theme)的分支
+这是 <https://github.com/Naereen/Nginx-Fancyindex-Theme> 的分支
 
 - 具备一个漂亮的UI同时兼顾快速和易用.
 - 支持**黑白主题切换**,同时具备自动切换.没有打开时闪烁.

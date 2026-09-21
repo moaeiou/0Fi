@@ -6,7 +6,7 @@ A FancyIndex theme with no dependencies.
 
 ## 🚀 Features
 
-This is a fork of [Naereen/Nginx-Fancyindex-Theme](https://github.com/Naereen/Nginx-Fancyindex-Theme).
+This is a fork of <https://github.com/Naereen/Nginx-Fancyindex-Theme>.
 
 - A beautiful UI that stays fast and easy to use.
 - Supports **light and dark themes**, including automatic switching, with no flash on load.
