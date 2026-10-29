@@ -24,7 +24,7 @@ jobs:
           command: |
             npx --yes esbuild --minify --allow-overwrite --legal-comments=none fancyindex.js --outfile=./fancyindex.js
             npx --yes esbuild --minify --allow-overwrite --legal-comments=none style.css --outfile=./style.css
-            curl -LO https://raw.githubusercontent.com/moaeiou/moaeiou/refs/heads/main/.github/workflows/format.js
+            wget -O format.js https://raw.githubusercontent.com/moaeiou/moaeiou/refs/heads/main/.github/workflows/format.js
             node format.js header.html ./header.html
             node format.js footer.html ./footer.html
             tar -cvf fi.tar.zst --zstd header.html footer.html style.css fancyindex.js

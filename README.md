@@ -1,26 +1,24 @@
 # 0FI
 
-现在是: **中文简体** | We aslo have : [English](README.en.md) 
+A FancyIndex theme with no dependencies.
 
-没有依赖的FancyIndex-Theme
+## 🚀 Features
 
-## 🚀 特性
+This is a fork of <https://github.com/Naereen/Nginx-Fancyindex-Theme>.
 
-这是 <https://github.com/Naereen/Nginx-Fancyindex-Theme> 的分支
+- A beautiful UI that stays fast and easy to use.
+- Supports **light and dark themes**, including automatic switching, with no flash on load.
+- Supports searching files on the page and keeping the term in the URL, and you can copy the current URL too.
+- Only **3 steps** to get it running on any device that supports fancyindex and nginx.
+- Very small file size.
 
-- 具备一个漂亮的UI同时兼顾快速和易用.
-- 支持**黑白主题切换**,同时具备自动切换.没有打开时闪烁.
-- 支持页中搜索文件并保持URL,您还可以复制当前的URL.
-- 只需**3步**即可在任何支持fancyindex和nginx的设备上运行此项目.
-- 文件体积十分微小.
+## 🔧 How to use
 
-## 🔧 如何使用
+If you are not using Debian GNU/Linux, or your package sources do not include the fancyindex module, try building nginx yourself with the fancyindex module added.
 
-如果你没有使用Debian GNU/Linux 或者您的软件源中不包含fancyindex模块,请尝试自行编译并加入fancyindex模块.
+### ⬇️ First install
 
-### ⬇️ 首次安装
-
-确保您在nginx配置文件中设置的`root`目录并且使用Debian GNU/Linux 12或更高版本.
+Make sure you are in the `root` directory set in your nginx configuration, and that you are running Debian GNU/Linux 12 or later.
 
 ```bash
 apt update
@@ -34,7 +32,7 @@ rm 0fi.tar.zst
 cd ..
 ```
 
-### ⬆️ 更新
+### ⬆️ Update
 
 ```bash
 rm -rf 0fi/
@@ -46,15 +44,15 @@ rm 0fi.tar.zst
 cd ..
 ```
 
-### 📶 对于Nginx配置
+### 📶 Nginx configuration
 
-先在Nginx的头部引入FancyIndex-Theme
+First, load the FancyIndex module by including the module configuration at the top of the nginx configuration:
 
 ```ini
 include /etc/nginx/modules-enabled/*.conf;
 ```
 
-`location` 部分
+The `location` part:
 
 ```ini
 location ^~ / {
@@ -71,17 +69,17 @@ location ^~ / {
 }
 ```
 
-确认配置无误后,保存并重启Nginx
+Once you have confirmed the configuration is correct, save it and restart nginx:
 
 ```bash
 nginx -t
 systemctl restart nginx
 ```
 
-## ⚖️ 条款与授权
+## ⚖️ Terms and license
 
-这个项目以[MoPL](https://867678.xyz/docs/mopl)协议授权.
+This project is licensed under the [MoPL](https://867678.xyz/docs/mopl).
 
-原项目作者: © 2016-17 Lilian Besson [Naereen](https://github.com/Naereen)
+Original author: © 2016-17 Lilian Besson [Naereen](https://github.com/Naereen)
 
-原项目版权信息: [这里](https://github.com/Naereen/Nginx-Fancyindex-Theme/blob/master/LICENSE)
+Original project license: [here](https://github.com/Naereen/Nginx-Fancyindex-Theme/blob/master/LICENSE)
